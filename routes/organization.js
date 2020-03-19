@@ -66,7 +66,6 @@ router.get("/api/organizations", (req, res) => {
 router.get("/api/organizations/logout", (req, res) => {
     if (req.cookies.organizationToken) {
         res.status(200)
-            .setHeader('Access-Control-Allow-Headers', 'Set-Cookie')
             .clearCookie("organizationToken")
             .end();
     } else {
@@ -167,7 +166,6 @@ router.post("/api/organizations/login", (req, res) => {
                 // Save the issued token in cookies
                 return res
                     .cookie("organizationToken", token, { httpOnly: true })
-                    .setHeader("Access-Control-Allow-Headers", "Set-Cookie")
                     .status(200)
                     .json({
                         organization: { id: orgId, name: organization.name }

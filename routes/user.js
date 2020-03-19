@@ -40,7 +40,6 @@ router.get("/api/users/logout", (req, res) => {
     if (req.cookies.userToken) {
         res.status(200)
             .clearCookie("userToken")
-            .setHeader("Access-Control-Allow-Headers", "Set-Cookie")
             .end();
     } else {
         res.status(500).json({ error: "Failed to logout" });
@@ -154,7 +153,6 @@ router.post("/api/users/login", (req, res) => {
                 // Save the issued token in cookies
                 return res
                     .cookie("userToken", token, { httpOnly: true })
-                    .setHeader('Access-Control-Allow-Headers', 'Set-Cookie')
                     .status(200)
                     .json({ user: { name: user.name, id: userId } })
                     .end();
