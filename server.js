@@ -45,7 +45,7 @@ app.use(express.json());
 
 
 // Set CORS headers on response from this API using the `cors` NPM package.
-app.use(cors({ credentials: true }))
+app.use(cors({origin: 'https://vigorous-volhard-f9479f.netlify.com/Organization' , credentials: true }))
 
 // Mount imported Routers
 app.use(userRouter);
