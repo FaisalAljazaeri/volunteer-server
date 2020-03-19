@@ -151,6 +151,7 @@ router.post("/api/users/login", (req, res) => {
                     expiresIn: "12h"
                 });
                 // Save the issued token in cookies
+                res.setHeader('Cache-Control','private');
                 return res
                     .cookie("userToken", token, { httpOnly: true })
                     .status(200)
