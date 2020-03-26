@@ -7,9 +7,9 @@ const User = require("../model/User");
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
-
+ 
 // Autherization Middleware
-const auth = require("../middlewares/userAuth");
+const auth = require('../middlewares/userAuth');
 
 //Instantiate a Router (min app that only handles routes)
 const router = express.Router();
@@ -24,9 +24,7 @@ const saveUser = (user, res) => {
             // Create new user in the database
             return User.create(user);
         })
-        .then(user =>
-            res.status(201).json({ user: { name: user.name, id: user._id } })
-        )
+        .then(user => res.status(201).json({ user:{name:user.name, id: user._id}}))
         .catch(err => res.status(500).json({ msg: err.message }));
 };
 
@@ -36,15 +34,13 @@ const saveUser = (user, res) => {
  * @action :  Logout
  * @desc    : logout users
  */
-router.get("/api/users/logout", (req, res) => {
-    if (req.cookies.userToken) {
-        res.status(200)
-            .clearCookie("userToken")
-            .end();
-    } else {
-        res.status(500).json({ error: "Failed to logout" });
+router.get('/api/users/logout', (req,res) => {
+    if(req.cookies.userToken){
+        res.status(200).clearCookie("userToken").end();
+    }else{
+        res.status(500).json({error: 'Failed to logout'})
     }
-});
+})
 
 /**
  * @method : GET
@@ -96,19 +92,19 @@ router.get("/api/users/:id", (req, res) => {
  * @desc    Create a new user
  */
 router.post("/api/users", (req, res) => {
-    // Get the user object from the request body
-    const newUser = req.body.user;
-    // Check if the name already exists
-    User.findOne({ name: newUser.name })
-        .then(user => {
-            if (user) {
-                return res.status(500).json({ msg: "Name already exists." });
-            } else {
-                // In case the name is not already used save the new user.
-                saveUser(newUser, res);
-            }
-        })
-        .catch(err => res.status(500).json({ msg: err.message }));
+  // Get the user object from the request body
+  const newUser = req.body.user;
+  // Check if the name already exists
+  User.findOne({ name: newUser.name })
+      .then(user => {
+          if (user) {
+              return res.status(500).json({ msg: "Name already exists." });
+          } else {
+              // In case the name is not already used save the new user.
+              saveUser(newUser, res);
+          }
+      })
+      .catch(err => res.status(500).json({ msg: err.message }));
 });
 
 /**
@@ -150,13 +146,8 @@ router.post("/api/users/login", (req, res) => {
                 const token = jwt.sign(payload, process.env.JWT_SECRET, {
                     expiresIn: "12h"
                 });
-                // Save the issued token in cookies
-                res.setHeader('Cache-Control','private');
-                return res
-                    .cookie("userToken", token, { httpOnly: true })
-                    .status(200)
-                    .json({ user: { name: user.name, id: userId } })
-                    .end();
+                // Respond With the Generated JWT and User object
+                return res.status(200).json({user:{name: user.name, id: userId}, token});
             }
             // Case of wrong password
             return res.status(500).json({ msg: "wrong password" });
